@@ -16,7 +16,6 @@ package org.ml4j.nn.dl4j.activationfunctions;
 import org.ml4j.Matrix;
 import org.ml4j.MatrixFactory;
 import org.ml4j.nn.neurons.Neurons;
-import org.ml4j.nn.neurons.Neurons3D;
 import org.ml4j.nn.neurons.NeuronsActivation;
 import org.ml4j.nn.neurons.NeuronsActivationFeatureOrientation;
 import org.ml4j.nn.neurons.NeuronsActivationImpl;
@@ -35,22 +34,17 @@ public class DL4JUtil {
 		return ndArray.data().asFloat();
 	}
 
-	public static NeuronsActivation fromNDArray(MatrixFactory matrixFactory, INDArray ndArray, NeuronsActivationFeatureOrientation sourceOrientation, NeuronsActivationFeatureOrientation targetOrientation, Neurons neurons, boolean imageActivation) {
+	public static NeuronsActivation fromNDArray(MatrixFactory matrixFactory, INDArray ndArray, NeuronsActivationFeatureOrientation sourceOrientation, NeuronsActivationFeatureOrientation targetOrientation, Neurons neurons) {
 		
 		float[] rowsByRowsArray = getData(ndArray);
 		
 		Matrix matrix = sourceOrientation.equals(targetOrientation) ? 
 				matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray) 
 				: matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray).transpose();
-	
 		
-		NeuronsActivation neuronsActivation = new NeuronsActivationImpl(matrix,
+		return new NeuronsActivationImpl(neurons, matrix,
 				targetOrientation);
-		if (imageActivation) {
-			return neuronsActivation.asImageNeuronsActivation((Neurons3D)neurons);
-		} else {
-			return neuronsActivation;
-		}
+
 	}
 	
 	public static Matrix fromNDArrayToActivationMatrix(MatrixFactory matrixFactory, INDArray ndArray, NeuronsActivationFeatureOrientation sourceOrientation, NeuronsActivationFeatureOrientation targetOrientation) {
@@ -60,7 +54,6 @@ public class DL4JUtil {
 				matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray) 
 				: matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray).transpose();
 	
-		
 		return matrix;
 	}
 	
@@ -97,7 +90,6 @@ public class DL4JUtil {
 		return matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray).transpose();
 		} else {
 			return matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray);
-
 		}
 	}
 	

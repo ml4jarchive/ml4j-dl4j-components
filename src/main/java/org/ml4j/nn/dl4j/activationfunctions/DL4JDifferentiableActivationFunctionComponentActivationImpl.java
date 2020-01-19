@@ -72,7 +72,7 @@ public class DL4JDifferentiableActivationFunctionComponentActivationImpl
 		INDArray backPropFirst = backProp.getFirst();
 		
 		NeuronsActivation outputGradient = DL4JUtil.fromNDArray(matrixFactory, backPropFirst,
-				dl4jFeatureOrientation, inputActivation.getFeatureOrientation(), inputActivation.getNeurons(), false);
+				dl4jFeatureOrientation, inputActivation.getFeatureOrientation(), inputActivation.getNeurons());
 		return new DirectedComponentGradientImpl<>(gradient.getTotalTrainableAxonsGradients(), outputGradient);
 	}
 
