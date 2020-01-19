@@ -25,7 +25,6 @@ import org.ml4j.nn.components.activationfunctions.DefaultDifferentiableActivatio
 import org.ml4j.nn.components.activationfunctions.DifferentiableActivationFunctionComponentActivation;
 import org.ml4j.nn.components.activationfunctions.DifferentiableActivationFunctionComponentAdapter;
 import org.ml4j.nn.neurons.Neurons;
-import org.ml4j.nn.neurons.Neurons1D;
 import org.ml4j.nn.neurons.Neurons3D;
 import org.ml4j.nn.neurons.NeuronsActivation;
 import org.ml4j.nn.neurons.NeuronsActivationContextImpl;
@@ -92,7 +91,7 @@ public class BaseML4JActivationFunction extends BaseActivationFunction implement
 
 	private NeuronsActivation fromNDArray(INDArray ndArray) {
 		int rows = ndArray.rows();
-		Neurons neurons = new Neurons1D(rows, false);
+		Neurons neurons = new Neurons(rows, false);
 		return fromNDArray(matrixFactory, ndArray, NeuronsActivationFeatureOrientation.ROWS_SPAN_FEATURE_SET, neurons, false);
 	}
 	
