@@ -23,7 +23,6 @@ import org.ml4j.nn.components.NeuralComponentType;
 import org.ml4j.nn.components.activationfunctions.DifferentiableActivationFunctionComponent;
 import org.ml4j.nn.components.activationfunctions.DifferentiableActivationFunctionComponentActivation;
 import org.ml4j.nn.components.activationfunctions.base.DifferentiableActivationFunctionComponentBase;
-import org.ml4j.nn.neurons.ImageNeuronsActivation;
 import org.ml4j.nn.neurons.Neurons;
 import org.ml4j.nn.neurons.NeuronsActivation;
 import org.ml4j.nn.neurons.NeuronsActivationContext;
@@ -76,10 +75,9 @@ public class DL4JDifferentiableActivationFunctionComponentImpl extends Different
 		
 		NeuronsActivationFeatureOrientation dl4jActivationOrientation = dl4jRequiredActivationOrientation == null ? neuronsActivation.getFeatureOrientation() : dl4jRequiredActivationOrientation;
 		
-		boolean imageActivation = neuronsActivation instanceof ImageNeuronsActivation;	
 		INDArray inputNDArray = DL4JUtil.asNDArray(context.getMatrixFactory(), neuronsActivation, dl4jActivationOrientation);
 		INDArray outputNDArray =  dl4jActivationFunction.getActivation(inputNDArray, context.isTrainingContext());
-		NeuronsActivation outputActivation = DL4JUtil.fromNDArray(context.getMatrixFactory(), outputNDArray, dl4jActivationOrientation, neuronsActivation.getFeatureOrientation(), neurons, imageActivation);
+		NeuronsActivation outputActivation = DL4JUtil.fromNDArray(context.getMatrixFactory(), outputNDArray, dl4jActivationOrientation, neuronsActivation.getFeatureOrientation(), neurons);
 		
 		return new DL4JDifferentiableActivationFunctionComponentActivationImpl(context.getMatrixFactory(), 
 				dl4jActivationFunction, activationFunctionType, neuronsActivation, inputNDArray, outputActivation, dl4jActivationOrientation);
