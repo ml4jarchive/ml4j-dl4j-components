@@ -42,74 +42,78 @@ public class BaseML4JActivationFunction extends BaseActivationFunction implement
 	 * Default serialization id.
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private DifferentiableActivationFunction ml4jActivationFunction;
 	private MatrixFactory matrixFactory;
-	
-	public BaseML4JActivationFunction(MatrixFactory matrixFactory, DifferentiableActivationFunction ml4jActivationFunction) {
+
+	public BaseML4JActivationFunction(MatrixFactory matrixFactory,
+			DifferentiableActivationFunction ml4jActivationFunction) {
 		this.ml4jActivationFunction = ml4jActivationFunction;
 		// TODO Could default to Nd4jMatrixFactory
 		this.matrixFactory = matrixFactory;
 	}
-	
+
 	@Override
 	public Pair<INDArray, INDArray> backprop(INDArray in, INDArray eps) {
 
 		NeuronsActivation inputNeuronsActivation = fromNDArray(in);
 		NeuronsActivation gradientNeuronsActivation = fromNDArray(eps);
-		
+
 		Neurons neurons = inputNeuronsActivation.getNeurons();
-		
-		DifferentiableActivationFunctionComponentAdapter ml4jActivationFunctionComponent
-		 = new DefaultDifferentiableActivationFunctionComponentImpl(neurons, ml4jActivationFunction);
-		
-		
+
+		DifferentiableActivationFunctionComponentAdapter ml4jActivationFunctionComponent = new DefaultDifferentiableActivationFunctionComponentImpl(
+				neurons, ml4jActivationFunction);
+
 		// No output available, or needed, so set null.
-		DifferentiableActivationFunctionActivation activationFunctionActivation
-		 = new DefaultDifferentiableActivationFunctionActivationImpl(ml4jActivationFunction, inputNeuronsActivation, null);
-		
-		DifferentiableActivationFunctionComponentActivation activationFunctionComponentActivation
-		 = new DefaultDifferentiableActivationFunctionComponentActivationImpl(ml4jActivationFunctionComponent, 
-				 activationFunctionActivation, new NeuronsActivationContextImpl(matrixFactory, true));
-		
-		DirectedComponentGradient<NeuronsActivation> inputGradient = new DirectedComponentGradientImpl<>(gradientNeuronsActivation);
-		
-		DirectedComponentGradient<NeuronsActivation> outputGradient = activationFunctionComponentActivation.backPropagate(inputGradient);
-				
+		DifferentiableActivationFunctionActivation activationFunctionActivation = new DefaultDifferentiableActivationFunctionActivationImpl(
+				ml4jActivationFunction, inputNeuronsActivation, null);
+
+		DifferentiableActivationFunctionComponentActivation activationFunctionComponentActivation = new DefaultDifferentiableActivationFunctionComponentActivationImpl(
+				ml4jActivationFunctionComponent, activationFunctionActivation,
+				new NeuronsActivationContextImpl(matrixFactory, true));
+
+		DirectedComponentGradient<NeuronsActivation> inputGradient = new DirectedComponentGradientImpl<>(
+				gradientNeuronsActivation);
+
+		DirectedComponentGradient<NeuronsActivation> outputGradient = activationFunctionComponentActivation
+				.backPropagate(inputGradient);
+
 		return new Pair<>(asNDArray(matrixFactory, outputGradient.getOutput()), null);
 	}
 
 	@Override
 	public INDArray getActivation(INDArray input, boolean training) {
-		
-		DifferentiableActivationFunctionActivation activation = ml4jActivationFunction.activate(fromNDArray(matrixFactory, input, 
-				NeuronsActivationFeatureOrientation.ROWS_SPAN_FEATURE_SET, null, false), 
-				new NeuronsActivationContextImpl(matrixFactory, training));
-		
+
+		DifferentiableActivationFunctionActivation activation = ml4jActivationFunction
+				.activate(fromNDArray(matrixFactory, input, NeuronsActivationFeatureOrientation.ROWS_SPAN_FEATURE_SET,
+						null, false), new NeuronsActivationContextImpl(matrixFactory, training));
+
 		return asNDArray(matrixFactory, activation.getOutput());
 	}
 
 	private NeuronsActivation fromNDArray(INDArray ndArray) {
 		int rows = ndArray.rows();
 		Neurons neurons = new Neurons(rows, false);
-		return fromNDArray(matrixFactory, ndArray, NeuronsActivationFeatureOrientation.ROWS_SPAN_FEATURE_SET, neurons, false);
+		return fromNDArray(matrixFactory, ndArray, NeuronsActivationFeatureOrientation.ROWS_SPAN_FEATURE_SET, neurons,
+				false);
 	}
-	
-	private NeuronsActivation fromNDArray(MatrixFactory matrixFactory, INDArray ndArray, NeuronsActivationFeatureOrientation featureOrientation, Neurons neurons, boolean imageActivation) {
+
+	private NeuronsActivation fromNDArray(MatrixFactory matrixFactory, INDArray ndArray,
+			NeuronsActivationFeatureOrientation featureOrientation, Neurons neurons, boolean imageActivation) {
 		float[] rowsByRowsArray = ndArray.data().getFloatsAt(ndArray.offset(), ndArray.length());
-		NeuronsActivation neuronsActivation = new NeuronsActivationImpl(neurons, matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray),
+		NeuronsActivation neuronsActivation = new NeuronsActivationImpl(neurons,
+				matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray),
 				featureOrientation);
 		if (imageActivation) {
-			return neuronsActivation.asImageNeuronsActivation((Neurons3D)neurons);
+			return neuronsActivation.asImageNeuronsActivation((Neurons3D) neurons);
 		} else {
 			return neuronsActivation;
 		}
 	}
-	
+
 	private INDArray asNDArray(MatrixFactory matrixFactory, NeuronsActivation neuronsActivation) {
 		Matrix matrix = neuronsActivation.getActivations(matrixFactory);
 		return Nd4j.create(matrix.getRowByRowArray(), new int[] { matrix.getRows(), matrix.getColumns() });
 	}
-
 
 }

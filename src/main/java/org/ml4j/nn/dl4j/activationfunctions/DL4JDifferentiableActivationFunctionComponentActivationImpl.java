@@ -31,9 +31,12 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.primitives.Pair;
 
 /**
- * Adapter to wrap a DL4J IActivation instance and the activation output, so that they conform to a ML4J DifferentiableActivationFunctionComponentActivation interface.
+ * Adapter to wrap a DL4J IActivation instance and the activation output, so
+ * that they conform to a ML4J
+ * DifferentiableActivationFunctionComponentActivation interface.
  * 
- * Allows DL4J-specific activation functions to be used with a ML4J component graph or network.
+ * Allows DL4J-specific activation functions to be used with a ML4J component
+ * graph or network.
  * 
  * @author Michael Lavelle
  *
@@ -48,14 +51,16 @@ public class DL4JDifferentiableActivationFunctionComponentActivationImpl
 	private MatrixFactory matrixFactory;
 	private ActivationFunctionType activationFunctionType;
 	NeuronsActivationFeatureOrientation dl4jFeatureOrientation;
-	
-	public DL4JDifferentiableActivationFunctionComponentActivationImpl(MatrixFactory matrixFactory, IActivation dl4jActivationFunction, ActivationFunctionType activationFunctionType, NeuronsActivation inputActivation, INDArray inputNDArray,
-			NeuronsActivation outputActivation, NeuronsActivationFeatureOrientation dl4jFeatureOrientation) {
+
+	public DL4JDifferentiableActivationFunctionComponentActivationImpl(MatrixFactory matrixFactory,
+			IActivation dl4jActivationFunction, ActivationFunctionType activationFunctionType,
+			NeuronsActivation inputActivation, INDArray inputNDArray, NeuronsActivation outputActivation,
+			NeuronsActivationFeatureOrientation dl4jFeatureOrientation) {
 		this.inputActivation = inputActivation;
 		this.inputNDArray = inputNDArray;
 		this.outputActivation = outputActivation;
 		this.dl4jActivationFunction = dl4jActivationFunction;
-		this.activationFunctionType= activationFunctionType;
+		this.activationFunctionType = activationFunctionType;
 		this.matrixFactory = matrixFactory;
 	}
 
@@ -70,9 +75,9 @@ public class DL4JDifferentiableActivationFunctionComponentActivationImpl
 			throw new IllegalStateException("Activation gradient for activation functions with weights not supported");
 		}
 		INDArray backPropFirst = backProp.getFirst();
-		
-		NeuronsActivation outputGradient = DL4JUtil.fromNDArray(matrixFactory, backPropFirst,
-				dl4jFeatureOrientation, inputActivation.getFeatureOrientation(), inputActivation.getNeurons());
+
+		NeuronsActivation outputGradient = DL4JUtil.fromNDArray(matrixFactory, backPropFirst, dl4jFeatureOrientation,
+				inputActivation.getFeatureOrientation(), inputActivation.getNeurons());
 		return new DirectedComponentGradientImpl<>(gradient.getTotalTrainableAxonsGradients(), outputGradient);
 	}
 
@@ -95,5 +100,5 @@ public class DL4JDifferentiableActivationFunctionComponentActivationImpl
 	public NeuronsActivation getOutput() {
 		return outputActivation;
 	}
-	
+
 }

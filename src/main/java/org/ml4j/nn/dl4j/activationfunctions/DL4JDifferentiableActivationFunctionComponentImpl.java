@@ -33,65 +33,76 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Adapter to wrap a DL4J IActivation instance so that it conforms to a ML4J DifferentiableActivationFunctionComponent interface.
+ * Adapter to wrap a DL4J IActivation instance so that it conforms to a ML4J
+ * DifferentiableActivationFunctionComponent interface.
  * 
- * Allows DL4J-specific activation functions to be used with a ML4J component graph or network.
+ * Allows DL4J-specific activation functions to be used with a ML4J component
+ * graph or network.
  * 
  * @author Michael Lavelle
  *
  */
-public class DL4JDifferentiableActivationFunctionComponentImpl extends DifferentiableActivationFunctionComponentBase implements DifferentiableActivationFunctionComponent {
-	
-	private static final Logger LOGGER = 
-		      LoggerFactory.getLogger(DL4JDifferentiableActivationFunctionComponentImpl.class);
-	
+public class DL4JDifferentiableActivationFunctionComponentImpl extends DifferentiableActivationFunctionComponentBase
+		implements DifferentiableActivationFunctionComponent {
+
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(DL4JDifferentiableActivationFunctionComponentImpl.class);
+
 	/**
 	 * Default serialization id.
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private IActivation dl4jActivationFunction;
 	private ActivationFunctionType activationFunctionType;
 	private NeuronsActivationFeatureOrientation dl4jRequiredActivationOrientation;
-	
-	public DL4JDifferentiableActivationFunctionComponentImpl(Neurons neurons, IActivation dl4jActivationFunction, 
-			ActivationFunctionType activationFunctionType, NeuronsActivationFeatureOrientation dl4jRequiredActivationOrientation) {
+
+	public DL4JDifferentiableActivationFunctionComponentImpl(Neurons neurons, IActivation dl4jActivationFunction,
+			ActivationFunctionType activationFunctionType,
+			NeuronsActivationFeatureOrientation dl4jRequiredActivationOrientation) {
 		super(neurons, activationFunctionType);
 		this.dl4jActivationFunction = dl4jActivationFunction;
 		this.activationFunctionType = activationFunctionType;
 		this.dl4jRequiredActivationOrientation = dl4jRequiredActivationOrientation;
 	}
-	
+
 	@Override
 	public DifferentiableActivationFunctionComponentActivation forwardPropagate(NeuronsActivation neuronsActivation,
 			NeuronsActivationContext context) {
-		
+
 		if (!supports().contains(neuronsActivation.getFeatureOrientation())) {
-			throw new IllegalArgumentException("Input neurons activation format of:" + neuronsActivation.getFeatureOrientation() + " not supported");
+			throw new IllegalArgumentException("Input neurons activation format of:"
+					+ neuronsActivation.getFeatureOrientation() + " not supported");
 		}
 		if (optimisedFor().isPresent() && optimisedFor().get() != neuronsActivation.getFeatureOrientation()) {
 			LOGGER.warn("Not using optimised input format");
 		}
-		
-		NeuronsActivationFeatureOrientation dl4jActivationOrientation = dl4jRequiredActivationOrientation == null ? neuronsActivation.getFeatureOrientation() : dl4jRequiredActivationOrientation;
-		
-		INDArray inputNDArray = DL4JUtil.asNDArray(context.getMatrixFactory(), neuronsActivation, dl4jActivationOrientation);
-		INDArray outputNDArray =  dl4jActivationFunction.getActivation(inputNDArray, context.isTrainingContext());
-		NeuronsActivation outputActivation = DL4JUtil.fromNDArray(context.getMatrixFactory(), outputNDArray, dl4jActivationOrientation, neuronsActivation.getFeatureOrientation(), neurons);
-		
-		return new DL4JDifferentiableActivationFunctionComponentActivationImpl(context.getMatrixFactory(), 
-				dl4jActivationFunction, activationFunctionType, neuronsActivation, inputNDArray, outputActivation, dl4jActivationOrientation);
+
+		NeuronsActivationFeatureOrientation dl4jActivationOrientation = dl4jRequiredActivationOrientation == null
+				? neuronsActivation.getFeatureOrientation()
+				: dl4jRequiredActivationOrientation;
+
+		INDArray inputNDArray = DL4JUtil.asNDArray(context.getMatrixFactory(), neuronsActivation,
+				dl4jActivationOrientation);
+		INDArray outputNDArray = dl4jActivationFunction.getActivation(inputNDArray, context.isTrainingContext());
+		NeuronsActivation outputActivation = DL4JUtil.fromNDArray(context.getMatrixFactory(), outputNDArray,
+				dl4jActivationOrientation, neuronsActivation.getFeatureOrientation(), neurons);
+
+		return new DL4JDifferentiableActivationFunctionComponentActivationImpl(context.getMatrixFactory(),
+				dl4jActivationFunction, activationFunctionType, neuronsActivation, inputNDArray, outputActivation,
+				dl4jActivationOrientation);
 	}
-	
+
 	@Override
 	public NeuralComponentType<DifferentiableActivationFunctionComponent> getComponentType() {
-			return NeuralComponentType.createSubType(NeuralComponentBaseType.ACTIVATION_FUNCTION, 
-					activationFunctionType.getQualifiedId());
+		return NeuralComponentType.createSubType(NeuralComponentBaseType.ACTIVATION_FUNCTION,
+				activationFunctionType.getQualifiedId());
 	}
 
 	@Override
 	public DifferentiableActivationFunctionComponent dup() {
-		return new DL4JDifferentiableActivationFunctionComponentImpl(this.getInputNeurons(), dl4jActivationFunction, activationFunctionType, dl4jRequiredActivationOrientation);
+		return new DL4JDifferentiableActivationFunctionComponentImpl(this.getInputNeurons(), dl4jActivationFunction,
+				activationFunctionType, dl4jRequiredActivationOrientation);
 	}
 
 	@Override
@@ -101,6 +112,7 @@ public class DL4JDifferentiableActivationFunctionComponentImpl extends Different
 
 	@Override
 	public Optional<NeuronsActivationFeatureOrientation> optimisedFor() {
-		return dl4jRequiredActivationOrientation != null ? Optional.of(dl4jRequiredActivationOrientation) : Optional.empty();
+		return dl4jRequiredActivationOrientation != null ? Optional.of(dl4jRequiredActivationOrientation)
+				: Optional.empty();
 	}
 }
