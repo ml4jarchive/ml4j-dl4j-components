@@ -23,74 +23,82 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
 /**
- * Utilities for mapping between ML4J NeuronsActivation and Matrix instances and 
+ * Utilities for mapping between ML4J NeuronsActivation and Matrix instances and
  * ND4J's INDArrays.
  * 
  * @author Michael Lavelle
  */
 public class DL4JUtil {
-	
+
 	private static float[] getData(INDArray ndArray) {
 		return ndArray.data().asFloat();
 	}
 
-	public static NeuronsActivation fromNDArray(MatrixFactory matrixFactory, INDArray ndArray, NeuronsActivationFeatureOrientation sourceOrientation, NeuronsActivationFeatureOrientation targetOrientation, Neurons neurons) {
-		
+	public static NeuronsActivation fromNDArray(MatrixFactory matrixFactory, INDArray ndArray,
+			NeuronsActivationFeatureOrientation sourceOrientation,
+			NeuronsActivationFeatureOrientation targetOrientation, Neurons neurons) {
+
 		float[] rowsByRowsArray = getData(ndArray);
-		
-		Matrix matrix = sourceOrientation.equals(targetOrientation) ? 
-				matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray) 
-				: matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray).transpose();
-		
-		return new NeuronsActivationImpl(neurons, matrix,
-				targetOrientation);
+
+		Matrix matrix = sourceOrientation.equals(targetOrientation)
+				? matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray)
+				: matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray)
+						.transpose();
+
+		return new NeuronsActivationImpl(neurons, matrix, targetOrientation);
 
 	}
-	
-	public static Matrix fromNDArrayToActivationMatrix(MatrixFactory matrixFactory, INDArray ndArray, NeuronsActivationFeatureOrientation sourceOrientation, NeuronsActivationFeatureOrientation targetOrientation) {
+
+	public static Matrix fromNDArrayToActivationMatrix(MatrixFactory matrixFactory, INDArray ndArray,
+			NeuronsActivationFeatureOrientation sourceOrientation,
+			NeuronsActivationFeatureOrientation targetOrientation) {
 		float[] rowsByRowsArray = getData(ndArray);
-		
-		Matrix matrix = sourceOrientation.equals(targetOrientation) ? 
-				matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray) 
-				: matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray).transpose();
-	
+
+		Matrix matrix = sourceOrientation.equals(targetOrientation)
+				? matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray)
+				: matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray)
+						.transpose();
+
 		return matrix;
 	}
-	
-	public static INDArray asNDArray(MatrixFactory matrixFactory, NeuronsActivation neuronsActivation, NeuronsActivationFeatureOrientation targetOrientation) {
-		Matrix matrix = targetOrientation == neuronsActivation.getFeatureOrientation() ? neuronsActivation.getActivations(matrixFactory) : neuronsActivation.getActivations(matrixFactory).transpose();
+
+	public static INDArray asNDArray(MatrixFactory matrixFactory, NeuronsActivation neuronsActivation,
+			NeuronsActivationFeatureOrientation targetOrientation) {
+		Matrix matrix = targetOrientation == neuronsActivation.getFeatureOrientation()
+				? neuronsActivation.getActivations(matrixFactory)
+				: neuronsActivation.getActivations(matrixFactory).transpose();
 		return Nd4j.create(matrix.getRowByRowArray(), new int[] { matrix.getRows(), matrix.getColumns() });
 	}
-	
-	
-	
+
 	public static INDArray asNDArrayForWeights(MatrixFactory matrixFactory, Matrix matrix, boolean transpose) {
 		matrix = transpose ? matrix.transpose() : matrix;
 		return Nd4j.create(matrix.getRowByRowArray(), new int[] { matrix.getRows(), matrix.getColumns() });
 	}
-	
+
 	public static INDArray asNDArrayForBias(MatrixFactory matrixFactory, Matrix matrix, boolean transpose) {
 		matrix = transpose ? matrix.transpose() : matrix;
 		return Nd4j.create(matrix.getRowByRowArray(), new int[] { matrix.getRows(), matrix.getColumns() });
 	}
-	
+
 	public static Matrix fromNDArrayToBiasMatrix(MatrixFactory matrixFactory, INDArray ndArray, boolean transpose) {
 		float[] rowsByRowsArray = getData(ndArray);
 		if (transpose) {
-		return matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray).transpose();
+			return matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray)
+					.transpose();
 		} else {
 			return matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray);
 
 		}
 	}
-	
+
 	public static Matrix fromNDArrayToWeightsMatrix(MatrixFactory matrixFactory, INDArray ndArray, boolean transpose) {
 		float[] rowsByRowsArray = getData(ndArray);
 		if (transpose) {
-		return matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray).transpose();
+			return matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray)
+					.transpose();
 		} else {
 			return matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray);
 		}
 	}
-	
+
 }

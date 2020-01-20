@@ -11,42 +11,47 @@ import org.ml4j.nn.neurons.NeuronsActivationContext;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-public class DL4JDifferentiableActivationFunctionComponentActivationImplTest extends DifferentiableActivationFunctionComponentActivationTestBase<DifferentiableActivationFunctionComponentAdapter> {
+public class DL4JDifferentiableActivationFunctionComponentActivationImplTest extends
+		DifferentiableActivationFunctionComponentActivationTestBase<DifferentiableActivationFunctionComponentAdapter> {
 
 	@Mock
 	private DifferentiableActivationFunctionActivation mockActivationFunctionActivation;
-	
+
 	@Mock
 	private NeuronsActivationContext mockActivationContext;
-	
+
 	// TODO THUR
 	@Mock
 	protected DifferentiableActivationFunction mockActivationFunction;
-	
+
 	@Mock
 	protected DifferentiableActivationFunctionComponentAdapter mockDifferentiableActivationFunctionComponentAdapter;
-	
+
 	@Override
 	protected DifferentiableActivationFunctionComponentActivation createDifferentiableActivationFunctionComponentActivationUnderTest(
-			DifferentiableActivationFunctionComponentAdapter activationFunctionComponent, NeuronsActivation input, NeuronsActivation output) {
-		
-	    Mockito.when(mockDifferentiableActivationFunctionComponentAdapter.getActivationFunction()).thenReturn(mockActivationFunction);
+			DifferentiableActivationFunctionComponentAdapter activationFunctionComponent, NeuronsActivation input,
+			NeuronsActivation output) {
 
-		
+		Mockito.when(mockDifferentiableActivationFunctionComponentAdapter.getActivationFunction())
+				.thenReturn(mockActivationFunction);
+
 		Mockito.when(mockActivationFunctionActivation.getActivationFunction()).thenReturn(mockActivationFunction);
 		Mockito.when(mockActivationFunctionActivation.getInput()).thenReturn(input);
 		Mockito.when(mockActivationFunctionActivation.getOutput()).thenReturn(output);
-	
-		return new DefaultDifferentiableActivationFunctionComponentActivationImpl(activationFunctionComponent, mockActivationFunctionActivation, mockActivationContext);
+
+		return new DefaultDifferentiableActivationFunctionComponentActivationImpl(activationFunctionComponent,
+				mockActivationFunctionActivation, mockActivationContext);
 	}
 
 	@Override
 	public void testBackPropagate() {
-		
-		NeuronsActivation mockActivationFunctionGradient = createNeuronsActivation(mockOutputActivation.getFeatureCount(), mockOutputActivation.getExampleCount());
-		
-		Mockito.when(mockActivationFunction.activationGradient(mockActivationFunctionActivation, mockActivationContext)).thenReturn(mockActivationFunctionGradient);
-		
+
+		NeuronsActivation mockActivationFunctionGradient = createNeuronsActivation(
+				mockOutputActivation.getFeatureCount(), mockOutputActivation.getExampleCount());
+
+		Mockito.when(mockActivationFunction.activationGradient(mockActivationFunctionActivation, mockActivationContext))
+				.thenReturn(mockActivationFunctionGradient);
+
 		super.testBackPropagate();
 	}
 

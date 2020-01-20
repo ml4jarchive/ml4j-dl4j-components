@@ -28,10 +28,11 @@ import org.ml4j.provider.enums.activationfunctions.ActivationFunctionTypeEnum;
 import org.nd4j.linalg.activations.Activation;
 
 /**
- * Extension of the default DefaultDirectedComponentFactoryImpl from ML4J which uses DL4J components equivalents for
- * some functionality.
+ * Extension of the default DefaultDirectedComponentFactoryImpl from ML4J which
+ * uses DL4J components equivalents for some functionality.
  * 
- * Currently implemented so that activation functions from DL4J are used, while other components are loaded from ML4J
+ * Currently implemented so that activation functions from DL4J are used, while
+ * other components are loaded from ML4J
  * 
  * @author Michael Lavelle
  */
@@ -44,14 +45,16 @@ public class HybridML4JDL4JDefaultDirectedComponentFactory extends DefaultDirect
 	@Override
 	public DifferentiableActivationFunctionComponent createDifferentiableActivationFunctionComponent(Neurons neurons,
 			DifferentiableActivationFunction differentiableActivationFunction) {
-		return createDifferentiableActivationFunctionComponent(neurons, differentiableActivationFunction.getActivationFunctionType());
+		return createDifferentiableActivationFunctionComponent(neurons,
+				differentiableActivationFunction.getActivationFunctionType());
 	}
 
 	@Override
 	public DifferentiableActivationFunctionComponent createDifferentiableActivationFunctionComponent(Neurons neurons,
 			ActivationFunctionType activationFunctionType) {
 
-		// Find the provider-agnostic ActivationFunctionTypeEnum from this ml4j-specific type
+		// Find the provider-agnostic ActivationFunctionTypeEnum from this ml4j-specific
+		// type
 		ActivationFunctionTypeEnum activationFunctionTypeEnum = ActivationFunctionTypeEnum
 				.findByEnumValue(activationFunctionType.getBaseType()).orElseThrow(() -> new IllegalArgumentException(
 						"Cannot find provider-agnostic activation function type for:" + activationFunctionType));
@@ -59,9 +62,11 @@ public class HybridML4JDL4JDefaultDirectedComponentFactory extends DefaultDirect
 		// Get the dl4j equivalent enum
 		Activation dl4jActivationFunctionType = activationFunctionTypeEnum.providedBy(Provider.DL4J)
 				.getEnumAsType(Activation.class);
-		
-		NeuronsActivationFeatureOrientation requiredOrientation = activationFunctionType.getBaseType() == ActivationFunctionBaseType.SOFTMAX 
-				? NeuronsActivationFeatureOrientation.COLUMNS_SPAN_FEATURE_SET : null;
+
+		NeuronsActivationFeatureOrientation requiredOrientation = activationFunctionType
+				.getBaseType() == ActivationFunctionBaseType.SOFTMAX
+						? NeuronsActivationFeatureOrientation.COLUMNS_SPAN_FEATURE_SET
+						: null;
 		return new DL4JDifferentiableActivationFunctionComponentImpl(neurons,
 				dl4jActivationFunctionType.getActivationFunction(), activationFunctionType, requiredOrientation);
 
