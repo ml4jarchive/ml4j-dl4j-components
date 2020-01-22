@@ -52,13 +52,13 @@ public class HybridML4JDL4JDefaultDirectedComponentFactory extends DefaultDirect
 	@Override
 	public DifferentiableActivationFunctionComponent createDifferentiableActivationFunctionComponent(Neurons neurons,
 			ActivationFunctionType activationFunctionType) {
-
+		
 		// Find the provider-agnostic ActivationFunctionTypeEnum from this ml4j-specific
 		// type
 		ActivationFunctionTypeEnum activationFunctionTypeEnum = ActivationFunctionTypeEnum
-				.findByEnumValue(activationFunctionType.getBaseType()).orElseThrow(() -> new IllegalArgumentException(
-						"Cannot find provider-agnostic activation function type for:" + activationFunctionType));
-
+				.findByQualifiedEnumName(activationFunctionType.getQualifiedId()).orElseThrow(() -> new IllegalArgumentException(
+						"Cannot find provider-agnostic activation function type for:" + activationFunctionType));		
+		
 		// Get the dl4j equivalent enum
 		Activation dl4jActivationFunctionType = activationFunctionTypeEnum.providedBy(Provider.DL4J)
 				.getEnumAsType(Activation.class);
