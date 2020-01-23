@@ -28,8 +28,8 @@ import org.ml4j.nn.neurons.Neurons;
 import org.ml4j.nn.neurons.Neurons3D;
 import org.ml4j.nn.neurons.NeuronsActivation;
 import org.ml4j.nn.neurons.NeuronsActivationContextImpl;
-import org.ml4j.nn.neurons.NeuronsActivationFeatureOrientation;
 import org.ml4j.nn.neurons.NeuronsActivationImpl;
+import org.ml4j.nn.neurons.format.NeuronsActivationFormat;
 import org.nd4j.linalg.activations.BaseActivationFunction;
 import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -85,7 +85,7 @@ public class BaseML4JActivationFunction extends BaseActivationFunction implement
 	public INDArray getActivation(INDArray input, boolean training) {
 
 		DifferentiableActivationFunctionActivation activation = ml4jActivationFunction
-				.activate(fromNDArray(matrixFactory, input, NeuronsActivationFeatureOrientation.ROWS_SPAN_FEATURE_SET,
+				.activate(fromNDArray(matrixFactory, input, NeuronsActivationFormat.ROWS_SPAN_FEATURE_SET,
 						null, false), new NeuronsActivationContextImpl(matrixFactory, training));
 
 		return asNDArray(matrixFactory, activation.getOutput());
@@ -94,16 +94,16 @@ public class BaseML4JActivationFunction extends BaseActivationFunction implement
 	private NeuronsActivation fromNDArray(INDArray ndArray) {
 		int rows = ndArray.rows();
 		Neurons neurons = new Neurons(rows, false);
-		return fromNDArray(matrixFactory, ndArray, NeuronsActivationFeatureOrientation.ROWS_SPAN_FEATURE_SET, neurons,
+		return fromNDArray(matrixFactory, ndArray, NeuronsActivationFormat.ROWS_SPAN_FEATURE_SET, neurons,
 				false);
 	}
 
 	private NeuronsActivation fromNDArray(MatrixFactory matrixFactory, INDArray ndArray,
-			NeuronsActivationFeatureOrientation featureOrientation, Neurons neurons, boolean imageActivation) {
+			NeuronsActivationFormat<?> format, Neurons neurons, boolean imageActivation) {
 		float[] rowsByRowsArray = ndArray.data().getFloatsAt(ndArray.offset(), ndArray.length());
 		NeuronsActivation neuronsActivation = new NeuronsActivationImpl(neurons,
 				matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray),
-				featureOrientation);
+				format);
 		if (imageActivation) {
 			return neuronsActivation.asImageNeuronsActivation((Neurons3D) neurons);
 		} else {

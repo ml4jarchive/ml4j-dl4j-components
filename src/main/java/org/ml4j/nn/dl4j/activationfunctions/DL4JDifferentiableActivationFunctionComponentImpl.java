@@ -14,7 +14,6 @@
 package org.ml4j.nn.dl4j.activationfunctions;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import org.ml4j.nn.activationfunctions.ActivationFunctionType;
@@ -27,6 +26,9 @@ import org.ml4j.nn.neurons.Neurons;
 import org.ml4j.nn.neurons.NeuronsActivation;
 import org.ml4j.nn.neurons.NeuronsActivationContext;
 import org.ml4j.nn.neurons.NeuronsActivationFeatureOrientation;
+import org.ml4j.nn.neurons.format.NeuronsActivationFormat;
+import org.ml4j.nn.neurons.format.features.Dimension;
+import org.ml4j.nn.neurons.format.features.FlatFeaturesFormat;
 import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.slf4j.Logger;
@@ -69,12 +71,12 @@ public class DL4JDifferentiableActivationFunctionComponentImpl extends Different
 	@Override
 	public DifferentiableActivationFunctionComponentActivation forwardPropagate(NeuronsActivation neuronsActivation,
 			NeuronsActivationContext context) {
-
-		if (!supports().contains(neuronsActivation.getFeatureOrientation())) {
+		
+		if (!isSupported(neuronsActivation.getFormat())) {
 			throw new IllegalArgumentException("Input neurons activation format of:"
-					+ neuronsActivation.getFeatureOrientation() + " not supported");
+					+ neuronsActivation.getFormat() + " not supported");
 		}
-		if (optimisedFor().isPresent() && optimisedFor().get() != neuronsActivation.getFeatureOrientation()) {
+		if (optimisedFor().isPresent() && !optimisedFor().get().equals(neuronsActivation.getFormat())) {
 			LOGGER.warn("Not using optimised input format");
 		}
 
@@ -86,7 +88,7 @@ public class DL4JDifferentiableActivationFunctionComponentImpl extends Different
 				dl4jActivationOrientation);
 		INDArray outputNDArray = dl4jActivationFunction.getActivation(inputNDArray, context.isTrainingContext());
 		NeuronsActivation outputActivation = DL4JUtil.fromNDArray(context.getMatrixFactory(), outputNDArray,
-				dl4jActivationOrientation, neuronsActivation.getFeatureOrientation(), neurons);
+				dl4jActivationOrientation, neuronsActivation.getFormat(), neurons);
 
 		return new DL4JDifferentiableActivationFunctionComponentActivationImpl(context.getMatrixFactory(),
 				dl4jActivationFunction, activationFunctionType, neuronsActivation, inputNDArray, outputActivation,
@@ -104,15 +106,17 @@ public class DL4JDifferentiableActivationFunctionComponentImpl extends Different
 		return new DL4JDifferentiableActivationFunctionComponentImpl(this.getInputNeurons(), dl4jActivationFunction,
 				activationFunctionType, dl4jRequiredActivationOrientation);
 	}
-
+	
 	@Override
-	public List<NeuronsActivationFeatureOrientation> supports() {
-		return Arrays.asList(NeuronsActivationFeatureOrientation.values());
-	}
-
-	@Override
-	public Optional<NeuronsActivationFeatureOrientation> optimisedFor() {
-		return dl4jRequiredActivationOrientation != null ? Optional.of(dl4jRequiredActivationOrientation)
+	public Optional<NeuronsActivationFormat<?>> optimisedFor() {
+		return dl4jRequiredActivationOrientation != null ? Optional.of(new NeuronsActivationFormat<>(dl4jRequiredActivationOrientation, 
+				new FlatFeaturesFormat(), Arrays.asList(Dimension.EXAMPLE)))
 				: Optional.empty();
 	}
+	
+	@Override
+	public boolean isSupported(NeuronsActivationFormat<?> format) {
+		return true;
+	}
+
 }

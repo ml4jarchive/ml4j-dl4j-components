@@ -19,6 +19,7 @@ import org.ml4j.nn.neurons.Neurons;
 import org.ml4j.nn.neurons.NeuronsActivation;
 import org.ml4j.nn.neurons.NeuronsActivationFeatureOrientation;
 import org.ml4j.nn.neurons.NeuronsActivationImpl;
+import org.ml4j.nn.neurons.format.NeuronsActivationFormat;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
@@ -36,16 +37,16 @@ public class DL4JUtil {
 
 	public static NeuronsActivation fromNDArray(MatrixFactory matrixFactory, INDArray ndArray,
 			NeuronsActivationFeatureOrientation sourceOrientation,
-			NeuronsActivationFeatureOrientation targetOrientation, Neurons neurons) {
+			NeuronsActivationFormat<?> targetFormat, Neurons neurons) {
 
 		float[] rowsByRowsArray = getData(ndArray);
 
-		Matrix matrix = sourceOrientation.equals(targetOrientation)
+		Matrix matrix = sourceOrientation.equals(targetFormat.getFeatureOrientation())
 				? matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray)
 				: matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray)
 						.transpose();
 
-		return new NeuronsActivationImpl(neurons, matrix, targetOrientation);
+		return new NeuronsActivationImpl(neurons, matrix, targetFormat);
 
 	}
 
