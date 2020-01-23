@@ -13,6 +13,7 @@
  */
 package org.ml4j.nn.dl4j.activationfunctions;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.ml4j.nn.activationfunctions.ActivationFunctionType;
@@ -21,12 +22,13 @@ import org.ml4j.nn.components.NeuralComponentType;
 import org.ml4j.nn.components.activationfunctions.DifferentiableActivationFunctionComponent;
 import org.ml4j.nn.components.activationfunctions.DifferentiableActivationFunctionComponentActivation;
 import org.ml4j.nn.components.activationfunctions.base.DifferentiableActivationFunctionComponentBase;
-import org.ml4j.nn.neurons.FlatFeaturesFormat;
 import org.ml4j.nn.neurons.Neurons;
 import org.ml4j.nn.neurons.NeuronsActivation;
 import org.ml4j.nn.neurons.NeuronsActivationContext;
 import org.ml4j.nn.neurons.NeuronsActivationFeatureOrientation;
-import org.ml4j.nn.neurons.NeuronsActivationFormat;
+import org.ml4j.nn.neurons.format.NeuronsActivationFormat;
+import org.ml4j.nn.neurons.format.features.Dimension;
+import org.ml4j.nn.neurons.format.features.FlatFeaturesFormat;
 import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.slf4j.Logger;
@@ -86,7 +88,7 @@ public class DL4JDifferentiableActivationFunctionComponentImpl extends Different
 				dl4jActivationOrientation);
 		INDArray outputNDArray = dl4jActivationFunction.getActivation(inputNDArray, context.isTrainingContext());
 		NeuronsActivation outputActivation = DL4JUtil.fromNDArray(context.getMatrixFactory(), outputNDArray,
-				dl4jActivationOrientation, neuronsActivation.getFeatureOrientation(), neurons);
+				dl4jActivationOrientation, neuronsActivation.getFormat(), neurons);
 
 		return new DL4JDifferentiableActivationFunctionComponentActivationImpl(context.getMatrixFactory(),
 				dl4jActivationFunction, activationFunctionType, neuronsActivation, inputNDArray, outputActivation,
@@ -108,7 +110,7 @@ public class DL4JDifferentiableActivationFunctionComponentImpl extends Different
 	@Override
 	public Optional<NeuronsActivationFormat<?>> optimisedFor() {
 		return dl4jRequiredActivationOrientation != null ? Optional.of(new NeuronsActivationFormat<>(dl4jRequiredActivationOrientation, 
-				new FlatFeaturesFormat()))
+				new FlatFeaturesFormat(), Arrays.asList(Dimension.EXAMPLE)))
 				: Optional.empty();
 	}
 	
