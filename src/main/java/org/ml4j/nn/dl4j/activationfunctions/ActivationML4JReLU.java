@@ -10,8 +10,8 @@ public class ActivationML4JReLU extends BaseML4JActivationFunction {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public ActivationML4JReLU(MatrixFactory matrixFactory) {
+	public ActivationML4JReLU(String name, MatrixFactory matrixFactory) {
 		// TODO Could default to Nd4jMatrixFactory
-		super(matrixFactory, new DefaultReluActivationFunctionImpl());
+		super(name, matrixFactory, new DefaultReluActivationFunctionImpl());
 	}
 }

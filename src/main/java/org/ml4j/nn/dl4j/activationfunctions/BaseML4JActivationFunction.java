@@ -45,12 +45,14 @@ public class BaseML4JActivationFunction extends BaseActivationFunction implement
 
 	private DifferentiableActivationFunction ml4jActivationFunction;
 	private MatrixFactory matrixFactory;
+	private String name;
 
-	public BaseML4JActivationFunction(MatrixFactory matrixFactory,
+	public BaseML4JActivationFunction(String name, MatrixFactory matrixFactory,
 			DifferentiableActivationFunction ml4jActivationFunction) {
 		this.ml4jActivationFunction = ml4jActivationFunction;
 		// TODO Could default to Nd4jMatrixFactory
 		this.matrixFactory = matrixFactory;
+		this.name = name;
 	}
 
 	@Override
@@ -62,7 +64,7 @@ public class BaseML4JActivationFunction extends BaseActivationFunction implement
 		Neurons neurons = inputNeuronsActivation.getNeurons();
 
 		DifferentiableActivationFunctionComponentAdapter ml4jActivationFunctionComponent = new DefaultDifferentiableActivationFunctionComponentImpl(
-				neurons, ml4jActivationFunction);
+				name, neurons, ml4jActivationFunction);
 
 		// No output available, or needed, so set null.
 		DifferentiableActivationFunctionActivation activationFunctionActivation = new DefaultDifferentiableActivationFunctionActivationImpl(

@@ -15,6 +15,7 @@ package org.ml4j.nn.dl4j.factories;
 
 import org.ml4j.MatrixFactory;
 import org.ml4j.nn.activationfunctions.ActivationFunctionBaseType;
+import org.ml4j.nn.activationfunctions.ActivationFunctionProperties;
 import org.ml4j.nn.activationfunctions.ActivationFunctionType;
 import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
 import org.ml4j.nn.axons.factories.AxonsFactory;
@@ -43,15 +44,15 @@ public class HybridML4JDL4JDefaultDirectedComponentFactory extends DefaultDirect
 	}
 
 	@Override
-	public DifferentiableActivationFunctionComponent createDifferentiableActivationFunctionComponent(Neurons neurons,
+	public DifferentiableActivationFunctionComponent createDifferentiableActivationFunctionComponent(String name, Neurons neurons,
 			DifferentiableActivationFunction differentiableActivationFunction) {
-		return createDifferentiableActivationFunctionComponent(neurons,
-				differentiableActivationFunction.getActivationFunctionType());
+		return createDifferentiableActivationFunctionComponent(name, neurons,
+				differentiableActivationFunction.getActivationFunctionType(), differentiableActivationFunction.getActivationFunctionProperties());
 	}
 
 	@Override
-	public DifferentiableActivationFunctionComponent createDifferentiableActivationFunctionComponent(Neurons neurons,
-			ActivationFunctionType activationFunctionType) {
+	public DifferentiableActivationFunctionComponent createDifferentiableActivationFunctionComponent(String name, Neurons neurons,
+			ActivationFunctionType activationFunctionType, ActivationFunctionProperties activationFunctionProperties) {
 		
 		// Find the provider-agnostic ActivationFunctionTypeEnum from this ml4j-specific
 		// type
@@ -67,7 +68,7 @@ public class HybridML4JDL4JDefaultDirectedComponentFactory extends DefaultDirect
 				.getBaseType() == ActivationFunctionBaseType.SOFTMAX
 						? NeuronsActivationFeatureOrientation.COLUMNS_SPAN_FEATURE_SET
 						: null;
-		return new DL4JDifferentiableActivationFunctionComponentImpl(neurons,
+		return new DL4JDifferentiableActivationFunctionComponentImpl(name, neurons,
 				dl4jActivationFunctionType.getActivationFunction(), activationFunctionType, requiredOrientation);
 
 	}
