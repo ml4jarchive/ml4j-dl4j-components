@@ -59,10 +59,10 @@ public class DL4JDifferentiableActivationFunctionComponentImpl extends Different
 	private ActivationFunctionType activationFunctionType;
 	private NeuronsActivationFeatureOrientation dl4jRequiredActivationOrientation;
 
-	public DL4JDifferentiableActivationFunctionComponentImpl(Neurons neurons, IActivation dl4jActivationFunction,
+	public DL4JDifferentiableActivationFunctionComponentImpl(String name,Neurons neurons, IActivation dl4jActivationFunction,
 			ActivationFunctionType activationFunctionType,
 			NeuronsActivationFeatureOrientation dl4jRequiredActivationOrientation) {
-		super(neurons, activationFunctionType);
+		super(name, neurons, activationFunctionType);
 		this.dl4jActivationFunction = dl4jActivationFunction;
 		this.activationFunctionType = activationFunctionType;
 		this.dl4jRequiredActivationOrientation = dl4jRequiredActivationOrientation;
@@ -103,7 +103,7 @@ public class DL4JDifferentiableActivationFunctionComponentImpl extends Different
 
 	@Override
 	public DifferentiableActivationFunctionComponent dup() {
-		return new DL4JDifferentiableActivationFunctionComponentImpl(this.getInputNeurons(), dl4jActivationFunction,
+		return new DL4JDifferentiableActivationFunctionComponentImpl(name, this.getInputNeurons(), dl4jActivationFunction,
 				activationFunctionType, dl4jRequiredActivationOrientation);
 	}
 	
