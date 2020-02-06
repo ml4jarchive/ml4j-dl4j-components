@@ -27,6 +27,8 @@ import org.ml4j.nn.neurons.NeuronsActivationFeatureOrientation;
 import org.ml4j.provider.Provider;
 import org.ml4j.provider.enums.activationfunctions.ActivationFunctionTypeEnum;
 import org.nd4j.linalg.activations.Activation;
+import org.nd4j.linalg.activations.IActivation;
+import org.nd4j.linalg.activations.impl.ActivationLReLU;
 
 /**
  * Extension of the default DefaultDirectedComponentFactoryImpl from ML4J which
@@ -68,9 +70,18 @@ public class HybridML4JDL4JDefaultDirectedComponentFactory extends DefaultDirect
 				.getBaseType() == ActivationFunctionBaseType.SOFTMAX
 						? NeuronsActivationFeatureOrientation.COLUMNS_SPAN_FEATURE_SET
 						: null;
+		IActivation activationFunction = createActivationFunction(dl4jActivationFunctionType, activationFunctionProperties);
 		return new DL4JDifferentiableActivationFunctionComponentImpl(name, neurons,
-				dl4jActivationFunctionType.getActivationFunction(), activationFunctionType, requiredOrientation);
+				activationFunction, activationFunctionType, requiredOrientation);
 
+	}
+	
+	private IActivation createActivationFunction(Activation dl4jActivationFunctionType, ActivationFunctionProperties activationFunctionProperties) {
+		if (dl4jActivationFunctionType == Activation.LEAKYRELU && activationFunctionProperties.getAlpha().isPresent()) {
+			return new ActivationLReLU(activationFunctionProperties.getAlpha().get().floatValue());
+		} else {
+			return dl4jActivationFunctionType.getActivationFunction();
+		}
 	}
 
 }
