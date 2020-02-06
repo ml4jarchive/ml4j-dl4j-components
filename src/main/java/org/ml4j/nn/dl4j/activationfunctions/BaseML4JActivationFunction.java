@@ -30,6 +30,7 @@ import org.ml4j.nn.neurons.NeuronsActivation;
 import org.ml4j.nn.neurons.NeuronsActivationContextImpl;
 import org.ml4j.nn.neurons.NeuronsActivationImpl;
 import org.ml4j.nn.neurons.format.NeuronsActivationFormat;
+import org.ml4j.nn.neurons.format.features.DimensionScope;
 import org.nd4j.linalg.activations.BaseActivationFunction;
 import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -58,8 +59,8 @@ public class BaseML4JActivationFunction extends BaseActivationFunction implement
 	@Override
 	public Pair<INDArray, INDArray> backprop(INDArray in, INDArray eps) {
 
-		NeuronsActivation inputNeuronsActivation = fromNDArray(in);
-		NeuronsActivation gradientNeuronsActivation = fromNDArray(eps);
+		NeuronsActivation inputNeuronsActivation = fromNDArray(in, DimensionScope.INPUT);
+		NeuronsActivation gradientNeuronsActivation = fromNDArray(eps, DimensionScope.OUTPUT);
 
 		Neurons neurons = inputNeuronsActivation.getNeurons();
 
@@ -88,26 +89,26 @@ public class BaseML4JActivationFunction extends BaseActivationFunction implement
 
 		DifferentiableActivationFunctionActivation activation = ml4jActivationFunction
 				.activate(fromNDArray(matrixFactory, input, NeuronsActivationFormat.ROWS_SPAN_FEATURE_SET,
-						null, false), new NeuronsActivationContextImpl(matrixFactory, training));
+						null, DimensionScope.OUTPUT, false), new NeuronsActivationContextImpl(matrixFactory, training));
 
 		return asNDArray(matrixFactory, activation.getOutput());
 	}
 
-	private NeuronsActivation fromNDArray(INDArray ndArray) {
+	private NeuronsActivation fromNDArray(INDArray ndArray, DimensionScope dimensionScope) {
 		int rows = ndArray.rows();
 		Neurons neurons = new Neurons(rows, false);
 		return fromNDArray(matrixFactory, ndArray, NeuronsActivationFormat.ROWS_SPAN_FEATURE_SET, neurons,
-				false);
+				dimensionScope, false);
 	}
 
 	private NeuronsActivation fromNDArray(MatrixFactory matrixFactory, INDArray ndArray,
-			NeuronsActivationFormat<?> format, Neurons neurons, boolean imageActivation) {
+			NeuronsActivationFormat<?> format, Neurons neurons, DimensionScope dimensionScope, boolean imageActivation) {
 		float[] rowsByRowsArray = ndArray.data().getFloatsAt(ndArray.offset(), ndArray.length());
 		NeuronsActivation neuronsActivation = new NeuronsActivationImpl(neurons,
 				matrixFactory.createMatrixFromRowsByRowsArray(ndArray.rows(), ndArray.columns(), rowsByRowsArray),
 				format);
 		if (imageActivation) {
-			return neuronsActivation.asImageNeuronsActivation((Neurons3D) neurons);
+			return neuronsActivation.asImageNeuronsActivation((Neurons3D) neurons, dimensionScope);
 		} else {
 			return neuronsActivation;
 		}
