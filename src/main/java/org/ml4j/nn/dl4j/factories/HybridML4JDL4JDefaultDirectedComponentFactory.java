@@ -41,6 +41,13 @@ import org.nd4j.linalg.activations.impl.ActivationLReLU;
  */
 public class HybridML4JDL4JDefaultDirectedComponentFactory extends DefaultDirectedComponentFactoryImpl {
 
+	
+	
+	/**
+	 * Default serialization id.
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public HybridML4JDL4JDefaultDirectedComponentFactory(MatrixFactory matrixFactory, AxonsFactory axonsFactory) {
 		super(matrixFactory, axonsFactory, null);
 	}

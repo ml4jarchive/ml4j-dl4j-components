@@ -96,7 +96,7 @@ public class DL4JDifferentiableActivationFunctionComponentImpl extends Different
 	}
 
 	@Override
-	public NeuralComponentType<DifferentiableActivationFunctionComponent> getComponentType() {
+	public NeuralComponentType getComponentType() {
 		return NeuralComponentType.createSubType(NeuralComponentBaseType.ACTIVATION_FUNCTION,
 				activationFunctionType.getQualifiedId());
 	}
