@@ -22,6 +22,7 @@ import org.ml4j.nn.components.NeuralComponentType;
 import org.ml4j.nn.components.activationfunctions.DifferentiableActivationFunctionComponent;
 import org.ml4j.nn.components.activationfunctions.DifferentiableActivationFunctionComponentActivation;
 import org.ml4j.nn.components.activationfunctions.base.DifferentiableActivationFunctionComponentBase;
+import org.ml4j.nn.components.factories.DirectedComponentFactory;
 import org.ml4j.nn.neurons.Neurons;
 import org.ml4j.nn.neurons.NeuronsActivation;
 import org.ml4j.nn.neurons.NeuronsActivationContext;
@@ -102,7 +103,7 @@ public class DL4JDifferentiableActivationFunctionComponentImpl extends Different
 	}
 
 	@Override
-	public DifferentiableActivationFunctionComponent dup() {
+	public DifferentiableActivationFunctionComponent dup(DirectedComponentFactory directedComponentFactory) {
 		return new DL4JDifferentiableActivationFunctionComponentImpl(name, this.getInputNeurons(), dl4jActivationFunction,
 				activationFunctionType, dl4jRequiredActivationOrientation);
 	}
