@@ -19,6 +19,7 @@ import org.ml4j.nn.activationfunctions.ActivationFunctionProperties;
 import org.ml4j.nn.activationfunctions.ActivationFunctionType;
 import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
 import org.ml4j.nn.axons.factories.AxonsFactory;
+import org.ml4j.nn.components.DirectedComponentsContext;
 import org.ml4j.nn.components.activationfunctions.DifferentiableActivationFunctionComponent;
 import org.ml4j.nn.dl4j.activationfunctions.DL4JDifferentiableActivationFunctionComponentImpl;
 import org.ml4j.nn.factories.DefaultDirectedComponentFactoryImpl;
@@ -48,8 +49,8 @@ public class HybridML4JDL4JDefaultDirectedComponentFactory extends DefaultDirect
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public HybridML4JDL4JDefaultDirectedComponentFactory(MatrixFactory matrixFactory, AxonsFactory axonsFactory) {
-		super(matrixFactory, axonsFactory, null);
+	public HybridML4JDL4JDefaultDirectedComponentFactory(MatrixFactory matrixFactory, AxonsFactory axonsFactory, DirectedComponentsContext directedComponentsContext) {
+		super(matrixFactory, axonsFactory, null, directedComponentsContext);
 	}
 
 	@Override
